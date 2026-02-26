@@ -5,11 +5,15 @@ const { authMiddleware } = require("../middleware/auth");
 
 const router = express.Router();
 
-// Normalize MongoDB doc for frontend: use `id` (string) instead of `_id`
+// Normalize MongoDB doc for frontend: use `id` (string) and goalId as string
 function toTaskResponse(doc) {
   if (!doc) return doc;
-  const { _id, ...rest } = doc;
-  return { id: _id.toString(), ...rest };
+  const { _id, goalId, ...rest } = doc;
+  return {
+    id: _id.toString(),
+    ...rest,
+    goalId: goalId != null ? String(goalId) : null,
+  };
 }
 
 // GET /tasks/health — public, no auth (must be before authMiddleware)
@@ -23,19 +27,24 @@ router.get("/health", (req, res) => {
 // All routes below require login
 router.use(authMiddleware);
 
-// GET /tasks — list tasks (optional ?date=YYYY-MM-DD)
+// GET /tasks — list tasks (optional ?date=YYYY-MM-DD; admin: ?userId=... to see that user's tasks)
 router.get("/", async (req, res) => {
   try {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({ message: "Database not connected." });
     }
-    const { date } = req.query;
-    const baseFilter = { userId: req.user._id };
+    const { date, userId: queryUserId } = req.query;
+    const isAdmin = req.user.role === "admin";
+    const targetUserId = queryUserId && isAdmin ? queryUserId : req.user._id;
+    if (queryUserId && !isAdmin) {
+      return res.status(403).json({ message: "Only admins can view another user's tasks." });
+    }
+    const baseFilter = { userId: targetUserId };
     const filter = date ? { ...baseFilter, date } : baseFilter;
     const tasks = await Task.find(filter).sort({ createdAt: 1 }).lean();
     const out = tasks.map(toTaskResponse);
     if (process.env.NODE_ENV !== "production") {
-      console.log("GET /tasks", date ? `date=${date}` : "all", "->", out.length, "tasks");
+      console.log("GET /tasks", date ? `date=${date}` : "all", queryUserId ? `userId=${queryUserId}` : "", "->", out.length, "tasks");
     }
     res.json(out);
   } catch (err) {
@@ -53,7 +62,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const { title, date, startTime, endTime } = req.body || {};
+    const { title, date, startTime, endTime, goalId } = req.body || {};
     const titleStr = title != null ? String(title).trim() : "";
     if (!titleStr) {
       return res.status(400).json({ message: "Title is required" });
@@ -71,6 +80,10 @@ router.post("/", async (req, res) => {
       startTime: startTime != null && String(startTime).trim() ? String(startTime).trim() : null,
       endTime: endTime != null && String(endTime).trim() ? String(endTime).trim() : null,
     };
+
+    if (goalId && String(goalId).trim()) {
+      doc.goalId = String(goalId).trim();
+    }
 
     const task = await Task.create(doc);
     const out = toTaskResponse(task.toObject());
@@ -100,6 +113,10 @@ router.patch("/:id", async (req, res) => {
     }
     if (typeof req.body.endTime === "string") {
       update.endTime = req.body.endTime.trim() || null;
+    }
+    if (typeof req.body.goalId === "string") {
+      const goalStr = req.body.goalId.trim();
+      update.goalId = goalStr || null;
     }
 
     const task = await Task.findOneAndUpdate(

@@ -1,2 +1,19 @@
 @import "tailwindcss";
 
+/* Mobile: prevent layout shift and overscroll when loading/scrolling on phone */
+html {
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+body {
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  min-height: 100%;
+  min-height: 100dvh;
+  -webkit-overflow-scrolling: touch;
+}
+#app {
+  min-height: 100%;
+  min-height: 100dvh;
+}
