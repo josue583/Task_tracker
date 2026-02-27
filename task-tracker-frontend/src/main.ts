@@ -952,7 +952,7 @@ function renderAppScreen() {
   const userStr = localStorage.getItem(USER_KEY);
   const user: User | null = userStr ? JSON.parse(userStr) : null;
   app.innerHTML = `
-    <div class="min-h-screen min-h-[100dvh] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-slate-100 flex items-center justify-center px-3 sm:px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div class="min-h-screen min-h-[100dvh] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-slate-100 flex items-start justify-center px-3 sm:px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <div class="w-full max-w-xl bg-slate-900/70 border border-slate-700/70 backdrop-blur-md rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
         <header class="flex flex-wrap items-start sm:items-center justify-between gap-2 sm:gap-4">
           <div class="space-y-0.5 min-w-0 flex-1">
@@ -965,49 +965,55 @@ function renderAppScreen() {
             <button type="button" id="logout-btn" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-700 hover:bg-slate-600">Log out</button>
           </div>
         </header>
-        <section class="grid grid-cols-3 gap-2 sm:gap-3 text-xs sm:text-sm">
-          <div class="rounded-xl bg-slate-800/80 border border-slate-700 px-2 py-2 sm:px-3 sm:py-2.5">
-            <p class="text-slate-400">Total</p>
-            <p id="stat-total" class="mt-1 text-base sm:text-lg font-semibold text-slate-50">0</p>
+        <nav class="flex items-center gap-2 mt-2 text-xs sm:text-sm">
+          <button id="tab-daily" type="button" class="flex-1 px-3 py-1.5 rounded-full bg-slate-800 text-slate-100 border border-slate-600 text-xs sm:text-sm">Daily tasks</button>
+          <button id="tab-goals" type="button" class="flex-1 px-3 py-1.5 rounded-full bg-transparent text-slate-400 border border-slate-700 text-xs sm:text-sm">Long-term goals</button>
+        </nav>
+        <section id="daily-section" class="space-y-3 sm:space-y-4 mt-2">
+          <div class="grid grid-cols-3 gap-2 sm:gap-3 text-xs sm:text-sm">
+            <div class="rounded-xl bg-slate-800/80 border border-slate-700 px-2 py-2 sm:px-3 sm:py-2.5">
+              <p class="text-slate-400">Total</p>
+              <p id="stat-total" class="mt-1 text-base sm:text-lg font-semibold text-slate-50">0</p>
+            </div>
+            <div class="rounded-xl bg-emerald-900/40 border border-emerald-700/70 px-2 py-2 sm:px-3 sm:py-2.5">
+              <p class="text-emerald-300/80">Completed</p>
+              <p id="stat-completed" class="mt-1 text-base sm:text-lg font-semibold text-emerald-200">0</p>
+            </div>
+            <div class="rounded-xl bg-amber-900/40 border border-amber-700/70 px-2 py-2 sm:px-3 sm:py-2.5">
+              <p class="text-amber-300/80">Remaining</p>
+              <p id="stat-remaining" class="mt-1 text-base sm:text-lg font-semibold text-amber-200">0</p>
+            </div>
           </div>
-          <div class="rounded-xl bg-emerald-900/40 border border-emerald-700/70 px-2 py-2 sm:px-3 sm:py-2.5">
-            <p class="text-emerald-300/80">Completed</p>
-            <p id="stat-completed" class="mt-1 text-base sm:text-lg font-semibold text-emerald-200">0</p>
-          </div>
-          <div class="rounded-xl bg-amber-900/40 border border-amber-700/70 px-2 py-2 sm:px-3 sm:py-2.5">
-            <p class="text-amber-300/80">Remaining</p>
-            <p id="stat-remaining" class="mt-1 text-base sm:text-lg font-semibold text-amber-200">0</p>
-          </div>
+          <form id="task-form" class="space-y-2">
+            <p id="past-date-notice" class="text-xs text-amber-400/90 hidden">Past date: you can view and update tasks, but cannot add new ones.</p>
+            <div class="flex gap-2 min-w-0">
+              <input id="task-input" class="flex-1 min-w-0 px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700/80 shadow-inner text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed" placeholder="Add a task..." />
+              <button type="submit" class="shrink-0 px-3 sm:px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold shadow-lg shadow-indigo-900/40 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">Add</button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs text-slate-400">
+              <label class="flex items-center gap-2">
+                <span class="w-16 shrink-0">Start</span>
+                <input id="task-start" type="time" class="w-full px-2 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-xs focus:ring-1 focus:ring-indigo-500 disabled:opacity-60" />
+              </label>
+              <label class="flex items-center gap-2">
+                <span class="w-16 shrink-0">End</span>
+                <input id="task-end" type="time" class="w-full px-2 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-xs focus:ring-1 focus:ring-indigo-500 disabled:opacity-60" />
+              </label>
+            </div>
+            <div class="text-xs text-slate-400">
+              <label class="flex items-center gap-2">
+                <span class="w-16 shrink-0">Goal</span>
+                <select id="task-goal" class="flex-1 px-2 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-xs focus:ring-1 focus:ring-indigo-500">
+                  <option value="">No goal</option>
+                </select>
+              </label>
+            </div>
+          </form>
+          <p id="api-error" class="text-sm text-red-400 hidden"></p>
+          <ul id="task-list" class="space-y-2 max-h-80 overflow-y-auto text-sm pr-1"></ul>
+          <p id="empty-state" class="text-sm text-slate-400">Loading tasks...</p>
         </section>
-        <form id="task-form" class="space-y-2">
-          <p id="past-date-notice" class="text-xs text-amber-400/90 hidden">Past date: you can view and update tasks, but cannot add new ones.</p>
-          <div class="flex gap-2 min-w-0">
-            <input id="task-input" class="flex-1 min-w-0 px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700/80 shadow-inner text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed" placeholder="Add a task..." />
-            <button type="submit" class="shrink-0 px-3 sm:px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold shadow-lg shadow-indigo-900/40 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">Add</button>
-          </div>
-          <div class="grid grid-cols-2 gap-2 text-xs text-slate-400">
-            <label class="flex items-center gap-2">
-              <span class="w-16 shrink-0">Start</span>
-              <input id="task-start" type="time" class="w-full px-2 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-xs focus:ring-1 focus:ring-indigo-500 disabled:opacity-60" />
-            </label>
-            <label class="flex items-center gap-2">
-              <span class="w-16 shrink-0">End</span>
-              <input id="task-end" type="time" class="w-full px-2 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-xs focus:ring-1 focus:ring-indigo-500 disabled:opacity-60" />
-            </label>
-          </div>
-          <div class="text-xs text-slate-400">
-            <label class="flex items-center gap-2">
-              <span class="w-16 shrink-0">Goal</span>
-              <select id="task-goal" class="flex-1 px-2 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-xs focus:ring-1 focus:ring-indigo-500">
-                <option value="">No goal</option>
-              </select>
-            </label>
-          </div>
-        </form>
-        <p id="api-error" class="text-sm text-red-400 hidden"></p>
-        <ul id="task-list" class="space-y-2 max-h-80 overflow-y-auto text-sm pr-1"></ul>
-        <p id="empty-state" class="text-sm text-slate-400">Loading tasks...</p>
-        <section class="mt-4 border-t border-slate-800 pt-4 space-y-2">
+        <section id="goals-section" class="mt-4 border-t border-slate-800 pt-4 space-y-2 hidden">
           <div class="flex items-center justify-between gap-2">
             <h2 class="text-sm font-semibold text-slate-100">Long-term goals</h2>
             <p class="text-[0.7rem] text-slate-400">Plan 1–5 years ahead</p>
@@ -1078,6 +1084,37 @@ function renderAppScreen() {
     if (goalTitleInput) goalTitleInput.value = "";
     if (goalNotesInput) goalNotesInput.value = "";
   });
+  const dailyTab = document.getElementById("tab-daily");
+  const goalsTab = document.getElementById("tab-goals");
+  const dailySection = document.getElementById("daily-section");
+  const goalsSection = document.getElementById("goals-section");
+  const setTab = (tab: "daily" | "goals") => {
+    if (!dailySection || !goalsSection || !dailyTab || !goalsTab) return;
+    const activeClasses =
+      "flex-1 px-3 py-1.5 rounded-full bg-slate-800 text-slate-100 border border-slate-600 text-xs sm:text-sm";
+    const inactiveClasses =
+      "flex-1 px-3 py-1.5 rounded-full bg-transparent text-slate-400 border border-slate-700 text-xs sm:text-sm";
+    if (tab === "daily") {
+      dailySection.classList.remove("hidden");
+      goalsSection.classList.add("hidden");
+      dailyTab.className = activeClasses;
+      goalsTab.className = inactiveClasses;
+    } else {
+      dailySection.classList.add("hidden");
+      goalsSection.classList.remove("hidden");
+      dailyTab.className = inactiveClasses;
+      goalsTab.className = activeClasses;
+    }
+  };
+  dailyTab?.addEventListener("click", (e) => {
+    e.preventDefault();
+    setTab("daily");
+  });
+  goalsTab?.addEventListener("click", (e) => {
+    e.preventDefault();
+    setTab("goals");
+  });
+  setTab("daily");
   renderDayPicker();
   loadTasks();
   loadGoals();

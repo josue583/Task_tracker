@@ -1,7 +1,6 @@
 /**
  * Reset a user's password (saves a proper bcrypt hash).
  * Usage: node scripts/reset-password.js <email> <newPassword>
- * Example: node scripts/reset-password.js user@example.com MyNewPass123
  */
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -29,7 +28,7 @@ async function main() {
     process.exit(1);
   }
   user.password = newPassword;
-  await user.save(); // pre("save") hashes it
+  await user.save();
   console.log("Password reset for:", email);
   await mongoose.disconnect();
   process.exit(0);

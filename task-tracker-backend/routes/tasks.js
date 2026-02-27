@@ -5,7 +5,6 @@ const { authMiddleware } = require("../middleware/auth");
 
 const router = express.Router();
 
-// Normalize MongoDB doc for frontend: use `id` (string) and goalId as string
 function toTaskResponse(doc) {
   if (!doc) return doc;
   const { _id, goalId, ...rest } = doc;
@@ -68,7 +67,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const today = new Date().toISOString().slice(0, 10);
     const taskDate =
       date && String(date).trim() ? String(date).trim() : today;
 

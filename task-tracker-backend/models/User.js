@@ -16,7 +16,6 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-// True bcrypt hashes start with $2a$, $2b$, or $2y$
 function isBcryptHash(str) {
   return typeof str === "string" && /^\$2[aby]\$\d{2}\$/.test(str);
 }
@@ -27,10 +26,9 @@ userSchema.methods.comparePassword = async function (candidate) {
   if (isBcryptHash(stored)) {
     return bcrypt.compare(candidate, stored);
   }
-  // Stored password is plaintext (e.g. manual DB insert) — compare and re-hash on match
   if (stored === candidate) {
     this.password = candidate;
-    await this.save(); // pre("save") will hash it
+    await this.save();
     return true;
   }
   return false;

@@ -7,7 +7,6 @@ const taskRoutes = require("./routes/tasks");
 const goalRoutes = require("./routes/goals");
 
 const app = express();
-// In dev, allow common localhost ports so login works from the frontend
 const allowedOrigins = process.env.FRONTEND_URL
   ? [process.env.FRONTEND_URL.trim()]
   : ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "http://127.0.0.1:5173", "http://127.0.0.1:5174"];
@@ -15,7 +14,7 @@ app.use(
   cors({
     origin: (origin, cb) => {
       if (!origin || allowedOrigins.some((o) => o === origin)) return cb(null, true);
-      return cb(null, true); // allow other origins in dev when FRONTEND_URL not set
+      return cb(null, true);
     },
   })
 );
