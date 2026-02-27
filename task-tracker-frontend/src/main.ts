@@ -952,8 +952,8 @@ function renderAppScreen() {
   const userStr = localStorage.getItem(USER_KEY);
   const user: User | null = userStr ? JSON.parse(userStr) : null;
   app.innerHTML = `
-    <div class="min-h-screen min-h-[100dvh] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-slate-100 flex items-start justify-center px-3 sm:px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-      <div class="w-full max-w-xl bg-slate-900/70 border border-slate-700/70 backdrop-blur-md rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+    <div class="min-h-screen min-h-[100dvh] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-slate-100 flex items-center sm:items-start justify-center px-3 sm:px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div class="w-full max-w-xl h-full max-h-[100dvh] bg-slate-900/70 border border-slate-700/70 backdrop-blur-md rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto">
         <header class="flex flex-wrap items-start sm:items-center justify-between gap-2 sm:gap-4">
           <div class="space-y-0.5 min-w-0 flex-1">
             <p class="text-[0.65rem] sm:text-xs font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-indigo-400">Daily Focus</p>
@@ -990,7 +990,7 @@ function renderAppScreen() {
               <input id="task-input" class="flex-1 min-w-0 px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700/80 shadow-inner text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed" placeholder="Add a task..." />
               <button type="submit" class="shrink-0 px-3 sm:px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold shadow-lg shadow-indigo-900/40 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">Add</button>
             </div>
-            <div class="grid grid-cols-2 gap-2 text-xs text-slate-400">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-400">
               <label class="flex items-center gap-2">
                 <span class="w-16 shrink-0">Start</span>
                 <input id="task-start" type="time" class="w-full px-2 py-1.5 rounded-lg bg-slate-800 border border-slate-700/80 text-xs focus:ring-1 focus:ring-indigo-500 disabled:opacity-60" />
