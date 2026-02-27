@@ -953,7 +953,7 @@ function renderAppScreen() {
   const user: User | null = userStr ? JSON.parse(userStr) : null;
   app.innerHTML = `
     <div class="min-h-screen min-h-[100dvh] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-slate-100 flex items-center justify-center px-3 sm:px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-      <div class="w-full max-w-xl max-h-[100dvh] bg-slate-900/70 border border-slate-700/70 backdrop-blur-md rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 my-3 sm:my-6 space-y-4 sm:space-y-6 overflow-y-auto">
+      <div class="w-full max-w-xl max-h-[100dvh] bg-slate-900/70 border border-slate-700/70 backdrop-blur-md rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 my-1 sm:my-3 space-y-4 sm:space-y-6 overflow-y-auto">
         <header class="flex flex-wrap items-start sm:items-center justify-between gap-2 sm:gap-4">
           <div class="space-y-0.5 min-w-0 flex-1">
             <p class="text-[0.65rem] sm:text-xs font-semibold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-indigo-400">Daily Focus</p>
